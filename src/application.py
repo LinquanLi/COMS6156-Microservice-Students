@@ -34,7 +34,7 @@ def test_flask():
 @application.put("/students/<uni>")
 def put_student(uni):
     body = request.json
-    student.update_by_key(uni, body)
+    ColumbiaStudentResource().update_by_key(uni, body)
     return get_student_by_uni(uni)
 
 
@@ -42,7 +42,7 @@ def put_student(uni):
 def post_student():
     body = request.json
     try:
-        student.insert_by_key(body)
+        ColumbiaStudentResource().insert_by_key(body)
     except:
         return Response("Insert Failure", status=404, content_type="text/plain")
     return get_student_by_uni(body["uni"])
@@ -51,7 +51,7 @@ def post_student():
 @application.delete("/students/<uni>")
 def delete_student(uni):
     try:
-        student.delete_by_key(uni)
+        ColumbiaStudentResource().delete_by_key(uni)
         response = make_response("Delete Success!", 200)
     except:
         response = make_response("Delete Fail!", 400)
@@ -64,7 +64,7 @@ def get_students_by_template():
     students_per_page = int(params["limit"]) if "limit" in params else 10
     offset = students_per_page * (int(params["page"]) - 1) if "page" in params else 0
 
-    result = student.get_by_template(10, offset)
+    result = ColumbiaStudentResource().get_by_template(students_per_page, offset)
     if result:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
     else:
@@ -75,7 +75,7 @@ def get_students_by_template():
 
 @application.route("/students/<uni>", methods=["GET"])
 def get_student_by_uni(uni):
-    result = student.get_by_key(uni)
+    result = ColumbiaStudentResource().get_by_key(uni)
 
     if result:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")

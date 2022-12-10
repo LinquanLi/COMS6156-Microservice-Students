@@ -5,37 +5,39 @@ from os import getenv
 class ColumbiaStudentResource:
 
     def __init__(self):
-        self.user = getenv("USER")
-        self.password = getenv("PWD")
-        self.host = getenv("HOST")
-        self.conn = self._get_connection()
+        pass
 
-    def _get_connection(self):
+    @staticmethod
+    def _get_connection():
         conn = pymysql.connect(
-            user=self.user,
-            password=self.password,
-            host=self.host,
+            user=getenv("DBUSER"),
+            password=getenv("DBPWD"),
+            host=getenv("DBHOST"),
             cursorclass=pymysql.cursors.DictCursor,
             autocommit=True
         )
         return conn
 
-    def get_by_template(self, limit=10, offset=0):
+    @staticmethod
+    def get_by_template(limit=10, offset=0):
         sql = "SELECT * FROM f22_databases.columbia_students LIMIT %s OFFSET %s"
-        cur = self.conn.cursor()
+        conn = ColumbiaStudentResource._get_connection()
+        cur = conn.cursor()
         cur.execute(sql, args=(limit, offset))
         return cur.fetchall()
 
-    def get_by_key(self, key):
+    @staticmethod
+    def get_by_key(key):
         sql = "SELECT * FROM f22_databases.columbia_students where uni=%s"
-        # conn = ColumbiaStudentResource._get_connection()
-        cur = self.conn.cursor()
+        conn = ColumbiaStudentResource._get_connection()
+        cur = conn.cursor()
         cur.execute(sql, args=key)
         return cur.fetchone()
 
-    def update_by_key(self, uni, student):
-        # conn = ColumbiaStudentResource._get_connection()
-        cur = self.conn.cursor()
+    @staticmethod
+    def update_by_key(uni, student):
+        conn = ColumbiaStudentResource._get_connection()
+        cur = conn.cursor()
         content = []
         if "first_name" in student:
             content.append("first_name = \"" + student["first_name"] + "\"")
@@ -53,9 +55,10 @@ class ColumbiaStudentResource:
 
         return result
 
-    def insert_by_key(self, student):
-        # conn = ColumbiaStudentResource._get_connection()
-        cur = self.conn.cursor()
+    @staticmethod
+    def insert_by_key(student):
+        conn = ColumbiaStudentResource._get_connection()
+        cur = conn.cursor()
         if "uni" not in student:
             raise ValueError("No uni")
         uni = student["uni"] if "uni" in student else ""
@@ -69,9 +72,10 @@ class ColumbiaStudentResource:
         cur.execute(sql, args=(uni, first_name, last_name, middle_name, email, school_code))
         return
 
-    def delete_by_key(self, uni):
-        # conn = ColumbiaStudentResource._get_connection()
-        cur = self.conn.cursor()
+    @staticmethod
+    def delete_by_key(uni):
+        conn = ColumbiaStudentResource._get_connection()
+        cur = conn.cursor()
         sql = "DELETE FROM f22_databases.columbia_students WHERE uni=%s"
         cur.execute(sql, args=uni)
         return
