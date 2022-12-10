@@ -64,7 +64,7 @@ class ColumbiaStudentResource:
         middle_name = student["middle_name"] if "middle_name" in student else ""
         email = student["email"] if "email" in student else ""
         school_code = student["school_code"] if "school_code" in student else ""
-        sql = "INSERT INTO f22_databases.columbia_students (uni, last_name, first_name, middle_name, email, " \
+        sql = "INSERT INTO f22_databases.columbia_students (uni, first_name, last_name, middle_name, email, " \
               "school_code) VALUES (%s, %s, %s, %s, %s, %s)"
         cur.execute(sql, args=(uni, first_name, last_name, middle_name, email, school_code))
         return
